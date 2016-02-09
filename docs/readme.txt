@@ -9,6 +9,9 @@ Comentarios:
 
 
 Notas:
+Se debe agregar a config.php
+// Nivel de compresión de las imágenes
+$compression_level = 20;
 
 
 Uso:

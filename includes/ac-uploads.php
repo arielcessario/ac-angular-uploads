@@ -1,7 +1,10 @@
 <?php
-require_once "../../includes/config.php";
+require_once "../../../includes/config.php";
 $folder = $_SERVER['DOCUMENT_ROOT'];
+
+
 global $image_path;
+
 
 if (isset($_FILES["folder"])) {
     $output_dir = $image_path . $_FILES["folder"];
@@ -11,6 +14,7 @@ if (isset($_FILES["folder"])) {
 
 if (isset($_FILES["images"])) {
     $ret = array();
+    global $compression_level;
 
     $error = $_FILES["images"]["error"];
     //You need to handle  both cases
@@ -20,6 +24,13 @@ if (isset($_FILES["images"])) {
         $fileName = $_FILES["images"]["name"];
         move_uploaded_file($_FILES["images"]["tmp_name"], $output_dir . $fileName);
         $ret[] = $fileName;
+
+        $partes = explode('.', $_FILES["images"]["name"]);
+        $ext = $partes[count($partes) - 1];
+
+        $comp_name = str_replace("." . $ext, "_thumb." . $ext, $_FILES["images"]["name"]);
+
+        compressImage($image_path . $_FILES["images"]["name"], $image_path . $comp_name, $compression_level);
     } else  //Multiple files, file[]
     {
         $fileCount = count($_FILES["images"]["name"]);
@@ -34,7 +45,8 @@ if (isset($_FILES["images"])) {
 }
 
 
-function compressImage($source_url, $destination_url, $quality) {
+function compressImage($source_url, $destination_url, $quality)
+{
     $info = getimagesize($source_url);
 
     if ($info['mime'] == 'image/jpeg') $image = imagecreatefromjpeg($source_url);
@@ -47,3 +59,4 @@ function compressImage($source_url, $destination_url, $quality) {
     //return destination file
     return $destination_url;
 }
+
